@@ -167,6 +167,7 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
         bird.Launch(listPosBird.ToList<Vector2>());
         gameManager.canSpring = false;
+        gameManager.camFollowBird = true;
     }
 
 

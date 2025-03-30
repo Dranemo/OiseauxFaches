@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,20 +18,27 @@ public class GameManager : MonoBehaviour
     [SerializeField] Vector2 springPos = new Vector2(-.61f, -.67f);
 
 
+
     public int birdIndex = 0;
     private int birdOnSpringIndex = -1;
     public bool canSpring = false;
+    public bool camFollowBird = false;
 
     Coroutine movingBirdsCoroutine;
+    Coroutine watchCoroutine;
 
+    Camera mainCamera;
+    Vector3 mainCamPos;
+
+
+
+
+
+    [SerializeField] private GameObject blocksPosObject;
+    Vector2 blocksPos;
 
 
     private void Awake()
-    {
-        _instance = this;
-    }
-
-    void Start()
     {
         foreach (int index in IndexBirdsLevel)
         {
@@ -37,6 +46,40 @@ public class GameManager : MonoBehaviour
             firstBirdPos += birdDistance;
             birdsList.Add(bird);
         }
+
+        _instance = this;
+    }
+
+    private void Start()
+    {
+        Player.Instance().SetBird(birdsList[birdOnSpringIndex + 1].GetComponent<Bird>());
+
+        StartCoroutine(StartCoroutine());
+    }
+
+    private void Update()
+    {
+        if (camFollowBird && birdsList[birdOnSpringIndex].transform.position.x > mainCamPos.x && birdsList[birdOnSpringIndex].transform.position.x < blocksPos.x)
+        {
+            mainCamera.transform.position = new Vector3(birdsList[birdOnSpringIndex].transform.position.x, mainCamPos.y, mainCamPos.z);
+        }
+    }
+
+
+
+
+    IEnumerator StartCoroutine()
+    {
+        mainCamera = Camera.main;
+        mainCamPos = mainCamera.transform.position;
+
+        blocksPos.x = blocksPosObject.transform.position.x;
+        blocksPos.y = mainCamPos.y;
+
+
+        yield return watchCoroutine = StartCoroutine(MoveToPos(blocksPos, 2));
+        yield return watchCoroutine = StartCoroutine(WaitDur(3));
+        yield return watchCoroutine = StartCoroutine(MoveToPos(mainCamPos, 2));
 
 
         if(birdsList.Count > 0)
@@ -90,25 +133,43 @@ public class GameManager : MonoBehaviour
         movingBirdsCoroutine = null;
     }
 
-
-
-
-    public void NextBird()
+    private IEnumerator MoveToPos(Vector2 endPos, float duration)
     {
-        if (movingBirdsCoroutine != null)
-            return;
+        Vector3 startPos = mainCamera.transform.position;
+        Vector3 end = new Vector3(endPos.x, endPos.y, startPos.z);
+        float time = 0f;
+        while (time < duration)
+        {
+            float t = time / duration;
+            mainCamera.transform.position = Vector3.Lerp(startPos, end, t);
+            time += Time.deltaTime;
+            yield return null;
+        }
+        mainCamera.transform.position = end;
+    }
 
+    private IEnumerator WaitDur(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+    }
 
-        Debug.Log("Next Bird GM");
-
-        canSpring = false;
+    private IEnumerator NextBirdCorout( )
+    {
+        yield return MoveToPos(mainCamPos, 2);
         if (birdOnSpringIndex < birdsList.Count - 1)
         {
             movingBirdsCoroutine = StartCoroutine(MoveBirds(springPos, 3, 1, .2f));
         }
     }
 
-
+    public void NextBird()
+    {
+        if (movingBirdsCoroutine != null)
+            return;
+        canSpring = false;
+        camFollowBird = false;
+        StartCoroutine(NextBirdCorout());
+    }
 
 
 
