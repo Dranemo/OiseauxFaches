@@ -4,18 +4,47 @@ using System.Collections.Generic;
 
 
 
+public enum PowerType
+{
+    DoubleJump,
+}
+
+
 public class Bird : MonoBehaviour
 {
+    // Variables de l'oiseau
+    public float mass = .3f;
+    [SerializeField] private PowerType powerType;
+
+
+
+
     List<Vector2> listPosBird;
     float duration = .1f; // Durée de l'interpolation
     private Coroutine moveCoroutine;
 
 
 
-    public void StartValues(float _mass)
+
+    private void Start()
     {
         listPosBird = new List<Vector2>();
-        GetComponent<Rigidbody2D>().mass = _mass;
+        GetComponent<Rigidbody2D>().mass = mass;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public void Power()
+    {
+
     }
 
 
