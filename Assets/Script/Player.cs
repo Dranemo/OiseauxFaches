@@ -20,18 +20,6 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     private Vector2 end_pos;
 
 
-    // variables environnement
-    private float gravity = 9.81f;
-    private float k = 10;
-    private float f2;
-
-
-    // Liste des positions de la trajectoire
-    public int pointsCount = 100;
-    public float timeStep = 0.1f;
-    Vector2[] listPosBird;
-
-
     // State
     private bool isLaunched = false;
     private bool canceled = false;
@@ -59,10 +47,7 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.positionCount = pointsCount;
-
-
-        f2 = 0.2f / bird.mass;
+        lineRenderer.positionCount = bird.pointsCount;
     }
 
     // Update is called once per frame
@@ -70,7 +55,10 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     {
         if(Input.GetMouseButtonDown(0))
         {
-            Power();
+            if(isLaunched)
+            {
+                Power();
+            }
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
@@ -102,12 +90,13 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         end_pos = Camera.main.ScreenToWorldPoint(eventData.position);
 
 
-
         Vector2 direction = end_pos - start_pos;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        CalculateTrajectorySpring(start_pos, angle, VitesseInitiale(Vector2.Distance(end_pos, start_pos), angle));
+        bird.CalculateTrajectorySpring(start_pos, angle, bird.VitesseInitiale(Vector2.Distance(end_pos, start_pos), angle));
         DrawLine();
+
+        Debug.Log("Angle : " + angle);
 
         transform.position = end_pos;
     }
@@ -129,48 +118,17 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
         Vector2 direction = end_pos - start_pos;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        bird.distance = Vector2.Distance(end_pos, start_pos);
 
-        CalculateTrajectorySpring(start_pos, angle, VitesseInitiale(Vector2.Distance(end_pos, start_pos), angle));
+        bird.CalculateTrajectorySpring(start_pos, angle, bird.VitesseInitiale(bird.distance, angle));
         RemoveLine();
 
 
-        bird.Launch(listPosBird.ToList<Vector2>());
+        bird.Launch();
+
+        isLaunched = true;
     }
 
-
-
-
-    // ----------------------------------------------------------------------------------------------------------------- //
-    // ---------------------------------------------------- Calculs ---------------------------------------------------- //
-    // ----------------------------------------------------------------------------------------------------------------- //
-
-
-    // Calculate vitesse initiale
-    private float VitesseInitiale(float distance, float angle)
-    {
-        float angleRad = angle * Mathf.Deg2Rad;
-        float vitesse = distance * Mathf.Sqrt(k / bird.mass) * Mathf.Sqrt(1 - Mathf.Pow((bird.mass * gravity) / (distance * k) * Mathf.Sin(angleRad), 2));
-        return vitesse * 2;
-    }
-
-
-    void CalculateTrajectorySpring(Vector2 startPosition, float angle, float vitesseInitiale)
-    {
-        listPosBird = new Vector2[pointsCount];
-        float radianAngle = (angle + 180f) * Mathf.Deg2Rad;
-
-        float lambdaX = vitesseInitiale * Mathf.Cos(radianAngle);
-        float lambdaY = vitesseInitiale * Mathf.Sin(radianAngle) + gravity / f2;
-
-        for (int i = 0; i < pointsCount; i++)
-        {
-            float t = i * timeStep;
-            float x = startPosition.x + lambdaX / f2 * (1 - Mathf.Exp(-f2 *t));
-            float y = startPosition.y + lambdaY / f2 * (1 - Mathf.Exp(-f2 * t)) - gravity/f2 * t;
-
-            listPosBird[i] = new Vector2(x, y);
-        }
-    }
 
 
 
@@ -184,8 +142,8 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     {
         lineRenderer.enabled = true;
 
-        lineRenderer.positionCount = listPosBird.Length;
-        Vector3[] positions = System.Array.ConvertAll(listPosBird, p => (Vector3)p);
+        lineRenderer.positionCount = bird.tempListPosBird.Length;
+        Vector3[] positions = System.Array.ConvertAll(bird.tempListPosBird, p => (Vector3)p);
         lineRenderer.SetPositions(positions);
     }
 
