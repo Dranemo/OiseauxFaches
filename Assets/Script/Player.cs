@@ -21,13 +21,13 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
 
     // State
-    private bool isLaunched = false;
     private bool canceled = false;
 
     private LineRenderer lineRenderer;
 
     [SerializeField] private Bird bird;
-
+    static private Player _instance;
+    private GameManager gameManager;
 
 
 
@@ -40,12 +40,36 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
 
 
+    public static Player Instance()
+    {
+        if(_instance == null)
+        {
+            _instance = new Player();
+        }
+        return _instance;
+    }
+
+
     // ----------------------------------------------------------------------------------------------------------------- //
     // --------------------------------------------------- Unity ------------------------------------------------------- //
     // ----------------------------------------------------------------------------------------------------------------- //
     // Start is called before the first frame update
+
+    void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
     void Start()
     {
+        gameManager = GameManager.GetManager();
+
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = bird.pointsCount;
     }
@@ -60,9 +84,13 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                 Power();
             }
         }
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) && gameManager.canSpring)
         {
             Cancel();
+        }
+        if (Input.GetKeyDown(KeyCode.N) && !gameManager.canSpring)
+        {
+            NextBird();
         }
     }
 
@@ -74,6 +102,9 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     // Begin du drag
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if(!gameManager.canSpring)
+            canceled = true;
+
         start_pos = transform.position;
         end_pos = start_pos;
     }
@@ -97,8 +128,7 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         DrawLine();
 
         Debug.Log("Angle : " + angle);
-
-        transform.position = end_pos;
+        bird.transform.position = end_pos;
     }
 
     // Fin du drag + Launch de l'oiseau
@@ -125,6 +155,8 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
 
         bird.Launch();
+        gameManager.canSpring = false;
+        gameManager.camFollowBird = true;
 
         isLaunched = true;
     }
@@ -173,8 +205,21 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     private void Cancel()
     {
         Debug.Log("Cancel");
-        transform.position = start_pos;
+        bird.transform.position = start_pos;
         RemoveLine();
         canceled = true;
+    }
+
+    private void NextBird()
+    {
+        Debug.Log("Next Bird");
+
+        gameManager.NextBird();
+    }
+
+
+    public void SetBird(Bird _bird)
+    {
+        bird = _bird;
     }
 }
