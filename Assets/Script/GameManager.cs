@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     public bool camFollowBird = false;
 
     Coroutine movingBirdsCoroutine;
-    Coroutine watchCoroutine;
+    Coroutine waitingBirdOutsideCorout;
 
     Camera mainCamera;
     Vector3 mainCamPos;
@@ -62,6 +62,17 @@ public class GameManager : MonoBehaviour
         if (camFollowBird && birdsList[birdOnSpringIndex].transform.position.x > mainCamPos.x && birdsList[birdOnSpringIndex].transform.position.x < blocksPos.x)
         {
             mainCamera.transform.position = new Vector3(birdsList[birdOnSpringIndex].transform.position.x, mainCamPos.y, mainCamPos.z);
+            
+            if(waitingBirdOutsideCorout != null)
+            {
+                StopCoroutine(waitingBirdOutsideCorout);
+                waitingBirdOutsideCorout = null;
+            }
+        }
+        else if (camFollowBird)
+        {
+            if(waitingBirdOutsideCorout == null)
+                waitingBirdOutsideCorout = StartCoroutine(WaitBirdOutside(3));
         }
     }
 
@@ -77,9 +88,9 @@ public class GameManager : MonoBehaviour
         blocksPos.y = mainCamPos.y;
 
 
-        yield return watchCoroutine = StartCoroutine(MoveToPos(blocksPos, 2f));
-        yield return watchCoroutine = StartCoroutine(WaitDur(2f));
-        yield return watchCoroutine = StartCoroutine(MoveToPos(mainCamPos, 2f));
+        yield return StartCoroutine(MoveToPos(blocksPos, 2f));
+        yield return StartCoroutine(WaitDur(2f));
+        yield return StartCoroutine(MoveToPos(mainCamPos, 2f));
 
 
         if(birdsList.Count > 0)
@@ -171,6 +182,14 @@ public class GameManager : MonoBehaviour
         StartCoroutine(NextBirdCorout());
     }
 
+    IEnumerator WaitBirdOutside(float dur)
+    {
+        Debug.Log("WaitBirdOutside");
+        yield return new WaitForSeconds(dur);
+        Player.Instance().NextBird();
+
+        waitingBirdOutsideCorout = null;
+    }
 
 
     static public GameManager GetManager()

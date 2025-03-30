@@ -89,10 +89,6 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         {
             Cancel();
         }
-        if (Input.GetKeyDown(KeyCode.N) && !gameManager.canSpring)
-        {
-            NextBird();
-        }
     }
 
 
@@ -209,9 +205,9 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         canceled = true;
     }
 
-    private void NextBird()
+    public void NextBird()
     {
-        Debug.Log("Next Bird");
+        bird.Stop(true);
 
         gameManager.NextBird();
         isLaunched = false;

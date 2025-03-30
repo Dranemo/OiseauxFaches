@@ -133,7 +133,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 0.8
-  powerType: 0
+  powerType: 1
+  listPosBird: []
+  floorY: -3.5
+  pointsCount: 100
+  timeStep: 0.1
+  tempListPosBird: []
 --- !u!50 &3085183536124535443
 Rigidbody2D:
   serializedVersion: 4

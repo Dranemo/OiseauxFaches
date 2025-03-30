@@ -2,13 +2,13 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 
 
 
 public enum PowerType
 {
     DoubleJump,
+    Speed
 }
 
 
@@ -18,6 +18,7 @@ public class Bird : MonoBehaviour
     public float mass = .8f;
     [SerializeField] private PowerType powerType;
     bool powerUsed = false;
+    float velocity = 0;
 
 
 
@@ -32,8 +33,7 @@ public class Bird : MonoBehaviour
     private float gravity = 9.81f;
     private float k = 10;
     private float f2;
-    private float reboundFactorY = .5f;
-    private float reboundFactorX = .9f;
+    Vector2 reboundFactor = new Vector2(.9f, .5f);
     [SerializeField] private float floorY = -3.5f;
 
 
@@ -41,13 +41,13 @@ public class Bird : MonoBehaviour
     public int pointsCount = 100;
     public float timeStep = 0.1f;
     public Vector2[] tempListPosBird;
-    private float lambdaX = 0;
-    private float lambdaY = 0;
+    private Vector2[] lambdasValues;
+    Vector2 currentLambda = new Vector2(0, 0);
     private float t_impact = .1f;
     private int rebondCount = 0;
 
-    bool stopped = false;
-
+    public bool stopped = false;
+    Vector2 acceleration = new Vector2(1, 1);
 
 
 
@@ -58,9 +58,16 @@ public class Bird : MonoBehaviour
 
         f2 = 0.2f / mass;
 
-        if (powerType == PowerType.DoubleJump)
+
+        switch
+            (powerType)
         {
-            powerDelegate = DoubleJump;
+            case PowerType.DoubleJump:
+                powerDelegate = DoubleJump;
+                break;
+            case PowerType.Speed:
+                powerDelegate = Speed;
+                break;
         }
     }
 
@@ -79,9 +86,6 @@ public class Bird : MonoBehaviour
 
     public void Launch()
     {
-        Debug.Log("Launch " + name);
-
-
         if (moveCoroutine != null)
         {
             StopCoroutine(moveCoroutine);
@@ -105,6 +109,8 @@ public class Bird : MonoBehaviour
     {
         for (int i = 0; i < listPosBird.Count - 1; i++)
         {
+            currentLambda = lambdasValues[i];
+
             Vector2 startPos = listPosBird[i];
             Vector2 endPos = listPosBird[i + 1];
             float elapsedTime = 0;
@@ -119,6 +125,7 @@ public class Bird : MonoBehaviour
                 Vector2 newPosition = Vector2.Lerp(startPos, endPos, elapsedTime / comparison);
                 if (float.IsNaN(newPosition.x) || float.IsNaN(newPosition.y))
                 {
+                    Stop();
                     Debug.LogError("NaN detected in MoveBird");
                     yield break;
                 }
@@ -128,10 +135,13 @@ public class Bird : MonoBehaviour
             }
             if (float.IsNaN(endPos.x) || float.IsNaN(endPos.y))
             {
+                Stop();
                 Debug.LogError("NaN detected in MoveBird");
                 yield break;
             }
             transform.position = endPos;
+
+            CalculateVelocity();
         }
 
         Rebond();
@@ -156,32 +166,13 @@ public class Bird : MonoBehaviour
     }
 
 
-    public void CalculateTrajectorySpring(Vector2 startPosition, float angle, float vitesseInitiale)
-    {
-        tempListPosBird = new Vector2[pointsCount];
-        float radianAngle = (angle + 180f) * Mathf.Deg2Rad;
-
-        float lambdaX = vitesseInitiale * Mathf.Cos(radianAngle);
-        float lambdaY = vitesseInitiale * Mathf.Sin(radianAngle) + gravity / f2;
-
-        for (int i = 0; i < pointsCount; i++)
-        {
-            float t = i * timeStep;
-            float x = startPosition.x + lambdaX / f2 * (1 - Mathf.Exp(-f2 * t));
-            float y = startPosition.y + lambdaY / f2 * (1 - Mathf.Exp(-f2 * t)) - gravity / f2 * t;
-
-            tempListPosBird[i] = new Vector2(x, y);
-        }
-    }
-
-
     public void CalculateTrajectorySpring_recur(Vector2 startPosition, float angle, float vitesseInitiale)
     {
 
         float radianAngle = (angle + 180f) * Mathf.Deg2Rad;
 
-        lambdaX = vitesseInitiale * Mathf.Cos(radianAngle);
-        lambdaY = vitesseInitiale * Mathf.Sin(radianAngle);
+        currentLambda.x = vitesseInitiale * Mathf.Cos(radianAngle);
+        currentLambda.y = vitesseInitiale * Mathf.Sin(radianAngle);
 
         Recurrence(startPosition);
     }
@@ -190,7 +181,7 @@ public class Bird : MonoBehaviour
     {
         if (jump)
         {
-            lambdaY = Mathf.Abs(lambdaY);
+            currentLambda.y = Mathf.Abs(currentLambda.y);
         }
 
         
@@ -202,7 +193,7 @@ public class Bird : MonoBehaviour
     private void Recurrence(Vector2 startPos)
     {
         Vector2[] temp = new Vector2[pointsCount];
-        tempListPosBird = new Vector2[pointsCount];
+        Vector2[] lambdaTemp = new Vector2[pointsCount];
 
         float x = startPos.x;
         float y = startPos.y;
@@ -211,8 +202,8 @@ public class Bird : MonoBehaviour
 
         for (int i = 1; i < pointsCount; i++)
         {
-            x += lambdaX * timeStep;
-            y += lambdaY * timeStep;
+            x += currentLambda.x * timeStep;
+            y += currentLambda.y * timeStep;
 
             if (y <= floorY)
             {
@@ -229,61 +220,107 @@ public class Bird : MonoBehaviour
 
                 temp[i] = intersectionPoint;
 
-                lambdaX += -f2 * lambdaX * timeStep;
-                lambdaY += -(gravity + f2 * lambdaY) * timeStep;
+
+                currentLambda.x += (-f2 * currentLambda.x * timeStep);
+                currentLambda.y += (-(gravity + f2 * currentLambda.y) * timeStep);
+
+                lambdaTemp[i] = new Vector2(currentLambda.x, currentLambda.y);
 
 
 
                 tempListPosBird = new Vector2[i+1];
-                
+                lambdasValues = new Vector2[i + 1];
+
                 for (int j = 0; j <= i; j++)
                 {
                     tempListPosBird[j] = temp[j];
+                    lambdasValues[j] = lambdaTemp[j];
                 }
 
-                break;
+                return;
             }
                 
             
             temp[i] = new Vector2(x, y);
 
 
-            lambdaX += -f2 * lambdaX * timeStep;
-            lambdaY += -(gravity + f2 * lambdaY) * timeStep;
+            currentLambda.x += (-f2 * currentLambda.x * timeStep);
+            currentLambda.y += (-(gravity + f2 * currentLambda.y) * timeStep);
+
+            lambdaTemp[i] = new Vector2(currentLambda.x, currentLambda.y);
         }
+
+        tempListPosBird = temp;
+        lambdasValues = lambdaTemp;
+    }
+
+
+
+    void CalculateVelocity()
+    {
+        velocity = currentLambda.magnitude;
+        Debug.Log("Velocity: " + velocity);
     }
 
 
 
     void InverseDirectionY()
     {
-        lambdaY = -lambdaY;
+        currentLambda.y = -currentLambda.y;
     }
     void InverseDirectionX()
     {
-        lambdaX = -lambdaX;
+        currentLambda.x = -currentLambda.x;
     }
 
     void Rebond()
     {
         InverseDirectionY();
 
-        if(rebondCount * .05f < reboundFactorY)
+        if(rebondCount * .05f < reboundFactor.y)
             rebondCount++;
 
-        lambdaX *= reboundFactorX;
-        lambdaY = lambdaY * (reboundFactorY - (rebondCount * 0.05f));
+        currentLambda.x *= reboundFactor.x;
+        currentLambda.y = currentLambda.y * (reboundFactor.y - (rebondCount * 0.05f));
 
-        if(lambdaY <= 0.1 && lambdaX <= 0.1)
+        if(currentLambda.y <= 1 && currentLambda.x <= 1)
         {
-            Debug.Log("Stopped");
-            stopped = true;
-
-            lambdaY = 0;
-            lambdaX = 0;
+            Stop();
         }
     }
 
+
+
+    public void BlockImpactHorizontal()
+    {
+        InverseDirectionX();
+    }
+
+    public void BlockImpactVertical()
+    {
+        InverseDirectionY();
+    }
+
+
+
+
+    public void Stop(bool fromPlayerClass = false)
+    {
+        if(stopped)
+            return;
+
+        Debug.Log("Stopped");
+        stopped = true;
+
+        currentLambda = new Vector2(0, 0);
+
+        if(moveCoroutine != null)
+            StopCoroutine(moveCoroutine);
+        moveCoroutine = null;
+
+        if(!fromPlayerClass)
+            Player.Instance().NextBird();
+    }
 
 
 
@@ -291,6 +328,17 @@ public class Bird : MonoBehaviour
     private void DoubleJump()
     {
         TrajectoryContinuity(transform.position, true);
+        Launch();
+    }
+
+    private void Speed()
+    {
+        acceleration = new Vector2(3, 2);
+
+        currentLambda *= acceleration;
+
+
+        TrajectoryContinuity(transform.position);
         Launch();
     }
 }
