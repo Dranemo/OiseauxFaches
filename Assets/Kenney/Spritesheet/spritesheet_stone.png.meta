@@ -143,7 +143,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      spritesheet_stone_0: 7155186306338495844
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
