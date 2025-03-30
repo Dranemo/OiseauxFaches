@@ -16,12 +16,12 @@ public class Bird : MonoBehaviour
     // Variables de l'oiseau
     public float mass = .8f;
     [SerializeField] private PowerType powerType;
+    bool powerUsed = false;
 
 
 
 
     public List<Vector2> listPosBird;
-    float duration = .1f; // Durée de l'interpolation
     private Coroutine moveCoroutine;
     private delegate void PowerDelegate();
     private PowerDelegate powerDelegate;
@@ -31,7 +31,8 @@ public class Bird : MonoBehaviour
     private float gravity = 9.81f;
     private float k = 10;
     private float f2;
-    private float reboundFactor = .8f;
+    private float reboundFactorY = .5f;
+    private float reboundFactorX = .9f;
     [SerializeField] private float floorY = -3.5f;
 
 
@@ -41,6 +42,7 @@ public class Bird : MonoBehaviour
     public Vector2[] tempListPosBird;
     private float lambdaX = 0;
     private float lambdaY = 0;
+    private float t_impact = .1f;
 
 
 
@@ -63,6 +65,10 @@ public class Bird : MonoBehaviour
 
     public void Power()
     {
+        if(powerUsed)
+            return;
+        powerUsed = true;
+
         powerDelegate();
     }
 
@@ -91,16 +97,20 @@ public class Bird : MonoBehaviour
             Vector2 endPos = listPosBird[i + 1];
             float elapsedTime = 0;
 
-            while (elapsedTime < duration)
+
+	        float comparison = timeStep;
+            if (i == listPosBird.Count - 2) 
+                comparison = t_impact;
+
+            while (elapsedTime < comparison)
             {
-                transform.position = Vector2.Lerp(startPos, endPos, elapsedTime / duration);
+                transform.position = Vector2.Lerp(startPos, endPos, elapsedTime / comparison);
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
 
             transform.position = endPos;
         }
-            Debug.Log("End pos: " + listPosBird[listPosBird.Count-1]);
 
         TrajectoryContinuity(transform.position);
         Launch();
@@ -153,11 +163,11 @@ public class Bird : MonoBehaviour
         Recurrence(startPosition);
     }
 
-    public void TrajectoryContinuity(Vector2 startPosition, bool rebond = false)
+    public void TrajectoryContinuity(Vector2 startPosition, bool jump = false)
     {
-        if (rebond)
+        if (jump)
         {
-            lambdaY = Mathf.Abs(lambdaY) * reboundFactor;
+            lambdaY = Mathf.Abs(lambdaY);
         }
 
         
@@ -190,6 +200,8 @@ public class Bird : MonoBehaviour
                 float t = (floorY - previousPoint.y) / (y - previousPoint.y);
                 float intersectX = previousPoint.x + t * (x - previousPoint.x);
 
+                t_impact = (t) * timeStep;
+
                 Vector2 intersectionPoint = new Vector2(intersectX, floorY);
 
 
@@ -199,8 +211,10 @@ public class Bird : MonoBehaviour
                 lambdaY += -(gravity + f2 * lambdaY) * timeStep;
 
 
-                lambdaY = Mathf.Abs(lambdaY) * reboundFactor;
-                tempListPosBird = new Vector2[i + 1];
+                lambdaY = Mathf.Abs(lambdaY) * reboundFactorY;
+                lambdaX *= reboundFactorX;
+
+                tempListPosBird = new Vector2[i+1];
                 
                 for (int j = 0; j <= i; j++)
                 {

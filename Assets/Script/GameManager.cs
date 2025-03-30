@@ -77,9 +77,9 @@ public class GameManager : MonoBehaviour
         blocksPos.y = mainCamPos.y;
 
 
-        yield return watchCoroutine = StartCoroutine(MoveToPos(blocksPos, 0.1f));
-        yield return watchCoroutine = StartCoroutine(WaitDur(.1f));
-        yield return watchCoroutine = StartCoroutine(MoveToPos(mainCamPos, 0.1f));
+        yield return watchCoroutine = StartCoroutine(MoveToPos(blocksPos, 2f));
+        yield return watchCoroutine = StartCoroutine(WaitDur(2f));
+        yield return watchCoroutine = StartCoroutine(MoveToPos(mainCamPos, 2f));
 
 
         if(birdsList.Count > 0)
