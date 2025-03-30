@@ -22,6 +22,7 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     // State
     private bool canceled = false;
+    private bool isLaunched = false;
 
     private LineRenderer lineRenderer;
 
