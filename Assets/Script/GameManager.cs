@@ -22,10 +22,15 @@ public class GameManager : MonoBehaviour
 
     Coroutine movingBirdsCoroutine;
 
-    void Start()
+
+
+    private void Awake()
     {
         _instance = this;
+    }
 
+    void Start()
+    {
         foreach (int index in IndexBirdsLevel)
         {
             GameObject bird = Instantiate(birdPrefabList[index], firstBirdPos, Quaternion.identity);
@@ -46,6 +51,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator MoveBirds(Vector2 end, float height, float durationParabol, float durationLittle)
     {
         birdOnSpringIndex += 1;
+        Player.Instance().SetBird(birdsList[birdOnSpringIndex].GetComponent<Bird>());
         Vector2 previousBirdPos = birdsList[birdOnSpringIndex].transform.position;
 
         float time = 0f;
@@ -80,8 +86,8 @@ public class GameManager : MonoBehaviour
             birdsList[i].transform.position = targetPos;
         }
 
-
         canSpring = true;
+        movingBirdsCoroutine = null;
     }
 
 
@@ -89,8 +95,14 @@ public class GameManager : MonoBehaviour
 
     public void NextBird()
     {
+        if (movingBirdsCoroutine != null)
+            return;
+
+
+        Debug.Log("Next Bird GM");
+
         canSpring = false;
-        if (birdsList.Count > birdsList.Count - birdOnSpringIndex)
+        if (birdOnSpringIndex < birdsList.Count - 1)
         {
             movingBirdsCoroutine = StartCoroutine(MoveBirds(springPos, 3, 1, .2f));
         }

@@ -752,7 +752,6 @@ GameObject:
   - component: {fileID: 291777818}
   - component: {fileID: 291777817}
   - component: {fileID: 291777816}
-  - component: {fileID: 291777815}
   - component: {fileID: 291777814}
   m_Layer: 5
   m_Name: Image
@@ -807,20 +806,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &291777815
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 291777812}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2db372805780f0b46a7f54b9734b22ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mass: 0.3
-  powerType: 0
 --- !u!120 &291777816
 LineRenderer:
   serializedVersion: 2
@@ -941,7 +926,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointsCount: 30
   timeStep: 0.1
-  bird: {fileID: 291777815}
+  bird: {fileID: 0}
 --- !u!114 &291777818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -955,7 +940,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2358,6 +2343,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 707007320}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1100769792 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2182414184345409196, guid: ba90b4d0a94f86d4c9c1954116877ed2, type: 3}
+  m_PrefabInstance: {fileID: 3103332331666076076}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1100769793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100769792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cc1caddcaba8ed468faeaa62a198e5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  birdPrefabList:
+  - {fileID: 5080402381892654225, guid: ced4651387694e645b8d459e01cee84a, type: 3}
+  - {fileID: 5080402381892654225, guid: 7420e6755e8465a488dcca77251b34ea, type: 3}
+  IndexBirdsLevel: 000000000100000000000000
+  firstBirdPos: {x: -3, y: -3.5}
+  birdDistance: {x: -1, y: 0}
+  springPos: {x: -0.61, y: -0.67}
+  birdIndex: 0
+  canSpring: 0
 --- !u!1 &1177049813
 GameObject:
   m_ObjectHideFlags: 0
@@ -3855,7 +3866,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2182414184345409196, guid: ba90b4d0a94f86d4c9c1954116877ed2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1100769793}
   m_SourcePrefab: {fileID: 100100000, guid: ba90b4d0a94f86d4c9c1954116877ed2, type: 3}
 --- !u!1001 &5084702611572960373
 PrefabInstance:
