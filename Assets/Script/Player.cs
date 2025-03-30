@@ -214,6 +214,7 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         Debug.Log("Next Bird");
 
         gameManager.NextBird();
+        isLaunched = false;
     }
 
 

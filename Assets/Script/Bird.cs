@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 
 
 
@@ -43,6 +44,9 @@ public class Bird : MonoBehaviour
     private float lambdaX = 0;
     private float lambdaY = 0;
     private float t_impact = .1f;
+    private int rebondCount = 0;
+
+    bool stopped = false;
 
 
 
@@ -75,14 +79,22 @@ public class Bird : MonoBehaviour
 
     public void Launch()
     {
+        Debug.Log("Launch " + name);
+
+
         if (moveCoroutine != null)
         {
             StopCoroutine(moveCoroutine);
+            moveCoroutine = null;
         }
 
-
-
         listPosBird.Clear();
+
+        if (stopped)
+        {
+            return;
+        }
+
         listPosBird = tempListPosBird.ToList<Vector2>();
         moveCoroutine = StartCoroutine(MoveBird());
     }
@@ -104,14 +116,25 @@ public class Bird : MonoBehaviour
 
             while (elapsedTime < comparison)
             {
-                transform.position = Vector2.Lerp(startPos, endPos, elapsedTime / comparison);
+                Vector2 newPosition = Vector2.Lerp(startPos, endPos, elapsedTime / comparison);
+                if (float.IsNaN(newPosition.x) || float.IsNaN(newPosition.y))
+                {
+                    Debug.LogError("NaN detected in MoveBird");
+                    yield break;
+                }
+                transform.position = newPosition;
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
-
+            if (float.IsNaN(endPos.x) || float.IsNaN(endPos.y))
+            {
+                Debug.LogError("NaN detected in MoveBird");
+                yield break;
+            }
             transform.position = endPos;
         }
 
+        Rebond();
         TrajectoryContinuity(transform.position);
         Launch();
 
@@ -193,7 +216,6 @@ public class Bird : MonoBehaviour
 
             if (y <= floorY)
             {
-
                 Vector2 previousPoint = temp[i-1];
 
 
@@ -211,8 +233,6 @@ public class Bird : MonoBehaviour
                 lambdaY += -(gravity + f2 * lambdaY) * timeStep;
 
 
-                lambdaY = Mathf.Abs(lambdaY) * reboundFactorY;
-                lambdaX *= reboundFactorX;
 
                 tempListPosBird = new Vector2[i+1];
                 
@@ -223,13 +243,49 @@ public class Bird : MonoBehaviour
 
                 break;
             }
-
+                
+            
             temp[i] = new Vector2(x, y);
+
 
             lambdaX += -f2 * lambdaX * timeStep;
             lambdaY += -(gravity + f2 * lambdaY) * timeStep;
         }
     }
+
+
+
+    void InverseDirectionY()
+    {
+        lambdaY = -lambdaY;
+    }
+    void InverseDirectionX()
+    {
+        lambdaX = -lambdaX;
+    }
+
+    void Rebond()
+    {
+        InverseDirectionY();
+
+        if(rebondCount * .05f < reboundFactorY)
+            rebondCount++;
+
+        lambdaX *= reboundFactorX;
+        lambdaY = lambdaY * (reboundFactorY - (rebondCount * 0.05f));
+
+        if(lambdaY <= 0.1 && lambdaX <= 0.1)
+        {
+            Debug.Log("Stopped");
+            stopped = true;
+
+            lambdaY = 0;
+            lambdaX = 0;
+        }
+    }
+
+
+
 
 
     private void DoubleJump()
