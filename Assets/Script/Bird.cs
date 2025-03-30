@@ -13,7 +13,7 @@ public enum PowerType
 public class Bird : MonoBehaviour
 {
     // Variables de l'oiseau
-    public float mass = .3f;
+    public float mass = .8f;
     [SerializeField] private PowerType powerType;
 
 
