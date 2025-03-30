@@ -125,10 +125,8 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         Vector2 direction = end_pos - start_pos;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        bird.CalculateTrajectorySpring(start_pos, angle, bird.VitesseInitiale(Vector2.Distance(end_pos, start_pos), angle));
+        bird.CalculateTrajectorySpring_recur(start_pos, angle, bird.VitesseInitiale(Vector2.Distance(end_pos, start_pos), angle));
         DrawLine();
-
-        Debug.Log("Angle : " + angle);
         bird.transform.position = end_pos;
     }
 
@@ -149,9 +147,9 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
         Vector2 direction = end_pos - start_pos;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        bird.distance = Vector2.Distance(end_pos, start_pos);
+        float distance = Vector2.Distance(end_pos, start_pos);
 
-        bird.CalculateTrajectorySpring(start_pos, angle, bird.VitesseInitiale(bird.distance, angle));
+        bird.CalculateTrajectorySpring_recur(start_pos, angle, bird.VitesseInitiale(distance, angle));
         RemoveLine();
 
 

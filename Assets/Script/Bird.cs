@@ -31,13 +31,16 @@ public class Bird : MonoBehaviour
     private float gravity = 9.81f;
     private float k = 10;
     private float f2;
+    private float reboundFactor = .8f;
+    [SerializeField] private float floorY = -3.5f;
 
 
     // Liste des positions de la trajectoire
     public int pointsCount = 100;
     public float timeStep = 0.1f;
-    public float distance;
     public Vector2[] tempListPosBird;
+    private float lambdaX = 0;
+    private float lambdaY = 0;
 
 
 
@@ -78,6 +81,8 @@ public class Bird : MonoBehaviour
         moveCoroutine = StartCoroutine(MoveBird());
     }
 
+    
+
     private IEnumerator MoveBird()
     {
         for (int i = 0; i < listPosBird.Count - 1; i++)
@@ -95,6 +100,12 @@ public class Bird : MonoBehaviour
 
             transform.position = endPos;
         }
+            Debug.Log("End pos: " + listPosBird[listPosBird.Count-1]);
+
+        TrajectoryContinuity(transform.position);
+        Launch();
+
+        moveCoroutine = null;
     }
 
 
@@ -131,9 +142,85 @@ public class Bird : MonoBehaviour
     }
 
 
+    public void CalculateTrajectorySpring_recur(Vector2 startPosition, float angle, float vitesseInitiale)
+    {
+
+        float radianAngle = (angle + 180f) * Mathf.Deg2Rad;
+
+        lambdaX = vitesseInitiale * Mathf.Cos(radianAngle);
+        lambdaY = vitesseInitiale * Mathf.Sin(radianAngle);
+
+        Recurrence(startPosition);
+    }
+
+    public void TrajectoryContinuity(Vector2 startPosition, bool rebond = false)
+    {
+        if (rebond)
+        {
+            lambdaY = Mathf.Abs(lambdaY) * reboundFactor;
+        }
+
+        
+
+        Recurrence(startPosition);
+    }
+
+
+    private void Recurrence(Vector2 startPos)
+    {
+        Vector2[] temp = new Vector2[pointsCount];
+        tempListPosBird = new Vector2[pointsCount];
+
+        float x = startPos.x;
+        float y = startPos.y;
+        temp[0] = new Vector2(x, y);
+
+
+        for (int i = 1; i < pointsCount; i++)
+        {
+            x += lambdaX * timeStep;
+            y += lambdaY * timeStep;
+
+            if (y <= floorY)
+            {
+
+                Vector2 previousPoint = temp[i-1];
+
+
+                float t = (floorY - previousPoint.y) / (y - previousPoint.y);
+                float intersectX = previousPoint.x + t * (x - previousPoint.x);
+
+                Vector2 intersectionPoint = new Vector2(intersectX, floorY);
+
+
+                temp[i] = intersectionPoint;
+
+                lambdaX += -f2 * lambdaX * timeStep;
+                lambdaY += -(gravity + f2 * lambdaY) * timeStep;
+
+
+                lambdaY = Mathf.Abs(lambdaY) * reboundFactor;
+                tempListPosBird = new Vector2[i + 1];
+                
+                for (int j = 0; j <= i; j++)
+                {
+                    tempListPosBird[j] = temp[j];
+                }
+
+                break;
+            }
+
+            temp[i] = new Vector2(x, y);
+
+            lambdaX += -f2 * lambdaX * timeStep;
+            lambdaY += -(gravity + f2 * lambdaY) * timeStep;
+        }
+    }
+
+
     private void DoubleJump()
     {
-       CalculateTrajectorySpring(transform.position, -135, VitesseInitiale(distance, -135));
-       Launch();
+        TrajectoryContinuity(transform.position, true);
+        Launch();
     }
 }
