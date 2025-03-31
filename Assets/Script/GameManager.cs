@@ -94,15 +94,16 @@ public class GameManager : MonoBehaviour
 
 
 
-        yield return StartCoroutine(MoveToPos(blocksPos, 1.5f));
-        yield return StartCoroutine(WaitDur(1f));
-        yield return StartCoroutine(MoveToPos(mainCamPos, 1.5f));
+        yield return StartCoroutine(MoveToPos(blocksPos, 2f));
+        yield return StartCoroutine(WaitDur(2f));
+        yield return StartCoroutine(MoveToPos(mainCamPos, 2f));
 
 
         if(birdsList.Count > 0)
         {
+            yield return StartCoroutine(WaitDur(.5f));
             yield return movingBirdsCoroutine = StartCoroutine(MoveBirds(springPos, 3, 1, .2f));
-            yield return StartCoroutine(WaitDur(1f));
+            yield return StartCoroutine(WaitDur(.5f));
             yield return StartCoroutine(MoveToPos(camPosBig, 1.5f, true));
 
             canSpring = true;
