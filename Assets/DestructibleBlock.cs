@@ -25,10 +25,14 @@ public class DestructibleBlock : MonoBehaviour
 
         float damage = 0f;
 
-        // Si l'objet est un oiseau (tag "Bird"), seul la masse compte
         if (collision.collider.CompareTag("Bird"))
         {
             damage = rb.mass;
+
+            // Ajout d'une force artificielle pour simuler l'impact de l'oiseau
+            Vector2 direction = (transform.position - collision.transform.position).normalized;
+            float pushForce = rb.mass * 5f; // Ajuste le facteur selon le ressenti
+            GetComponent<Rigidbody2D>()?.AddForce(direction * pushForce, ForceMode2D.Impulse);
         }
         else
         {
@@ -65,4 +69,6 @@ public class DestructibleBlock : MonoBehaviour
         state = newState;
         spriteRenderer.sprite = damageSprites[(int)newState];
     }
+
+
 }
