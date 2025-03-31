@@ -102,8 +102,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockType: 0
-  damageSprites: []
-  maxDurability: 0
+  damageSprites:
+  - {fileID: 7236679087445258498, guid: 0b9abae1ce515e04bb0149dbb9ba0ae8, type: 3}
+  - {fileID: -5401608649808760138, guid: e809fb5edb110814fa51e8ed9488727b, type: 3}
+  - {fileID: 5850330922594191868, guid: 16ebd7ecfbb75bc489ecf79f4c08745b, type: 3}
+  maxDurability: 20
 --- !u!50 &8634509503654163256
 Rigidbody2D:
   serializedVersion: 4
