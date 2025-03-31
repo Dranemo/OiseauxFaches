@@ -35,6 +35,11 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     [SerializeField] private float distanceMax = 2f;
 
 
+    [SerializeField] private AudioClip stretch;
+    [SerializeField] private AudioClip release;
+    [SerializeField] private AudioClip cancel;
+
+
 
 
     // --------------------------------------------------------------------------------------------- //
@@ -108,6 +113,8 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
         start_pos = transform.position;
         end_pos = start_pos;
+
+        AudioSource.PlayClipAtPoint(stretch, Camera.main.transform.position);
     }
 
     // Calcul de l'angle, position et vitesse initiale + drawline + deplacement spring
@@ -186,6 +193,8 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         gameManager.camFollowBird = true;
 
         isLaunched = true;
+
+        AudioSource.PlayClipAtPoint(release, Camera.main.transform.position);
     }
 
 
@@ -235,6 +244,8 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         bird.transform.position = start_pos;
         RemoveLine();
         canceled = true;
+
+        AudioSource.PlayClipAtPoint(cancel, Camera.main.transform.position);
     }
 
     public void NextBird()

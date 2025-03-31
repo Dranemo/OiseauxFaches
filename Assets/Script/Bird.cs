@@ -51,6 +51,11 @@ public class Bird : MonoBehaviour
 
 
 
+
+    [SerializeField] private AudioClip power;
+
+
+
     private void Start()
     {
         listPosBird = new List<Vector2>();
@@ -76,11 +81,12 @@ public class Bird : MonoBehaviour
 
     public void Power()
     {
-        if(powerUsed)
+        if(powerUsed || rebondCount > 0)
             return;
         powerUsed = true;
 
         powerDelegate();
+        AudioSource.PlayClipAtPoint(power, transform.position);
     }
 
 

@@ -139,6 +139,8 @@ MonoBehaviour:
   pointsCount: 100
   timeStep: 0.1
   tempListPosBird: []
+  stopped: 0
+  power: {fileID: 8300000, guid: d4f91b56c5b4c694389ad627b79f9d7f, type: 3}
 --- !u!50 &3085183536124535443
 Rigidbody2D:
   serializedVersion: 4
