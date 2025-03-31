@@ -259,7 +259,6 @@ public class Bird : MonoBehaviour
     void CalculateVelocity()
     {
         velocity = currentLambda.magnitude;
-        Debug.Log("Velocity: " + velocity);
     }
 
 
@@ -313,6 +312,7 @@ public class Bird : MonoBehaviour
         stopped = true;
 
         currentLambda = new Vector2(0, 0);
+        GameManager.GetManager().StopWaitingCorout();
 
         if(moveCoroutine != null)
             StopCoroutine(moveCoroutine);

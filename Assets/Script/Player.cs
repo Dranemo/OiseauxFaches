@@ -30,6 +30,10 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     static private Player _instance;
     private GameManager gameManager;
 
+    bool tooNear = false;
+    [SerializeField] private float distanceMin = 0.2f;
+    [SerializeField] private float distanceMax = 2f;
+
 
 
 
@@ -121,6 +125,21 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         Vector2 direction = end_pos - start_pos;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
+        tooNear = false;
+        if(direction.magnitude < distanceMin)
+        {
+            tooNear = true;
+            Debug.Log("Too Near");
+        }
+
+        else if (direction.magnitude > distanceMax)
+        {
+            direction = direction.normalized * distanceMax;
+            end_pos = start_pos + direction;
+        }
+
+
+
         bird.CalculateTrajectorySpring_recur(start_pos, angle, bird.VitesseInitiale(Vector2.Distance(end_pos, start_pos), angle));
         DrawLine();
         bird.transform.position = end_pos;
@@ -129,6 +148,12 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     // Fin du drag + Launch de l'oiseau
     public void OnEndDrag(PointerEventData eventData)
     {
+        if(tooNear)
+        {
+            Cancel();
+        }
+
+
         if (canceled)
         {
             canceled = false;
@@ -143,6 +168,13 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
         Vector2 direction = end_pos - start_pos;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        if (direction.magnitude > distanceMax)
+        {
+            direction = direction.normalized * distanceMax;
+            end_pos = start_pos + direction;
+        }
+
         float distance = Vector2.Distance(end_pos, start_pos);
 
         bird.CalculateTrajectorySpring_recur(start_pos, angle, bird.VitesseInitiale(distance, angle));

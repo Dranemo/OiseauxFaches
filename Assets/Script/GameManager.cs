@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
 
 
 
+
     public int birdIndex = 0;
     private int birdOnSpringIndex = -1;
     public bool canSpring = false;
@@ -29,7 +30,8 @@ public class GameManager : MonoBehaviour
 
     Camera mainCamera;
     Vector3 mainCamPos;
-
+    [SerializeField] private float camSizeBig = 8;
+    [SerializeField] private float camPosYBig = 3;
 
 
 
@@ -61,7 +63,7 @@ public class GameManager : MonoBehaviour
     {
         if (camFollowBird && birdsList[birdOnSpringIndex].transform.position.x > mainCamPos.x && birdsList[birdOnSpringIndex].transform.position.x < blocksPos.x)
         {
-            mainCamera.transform.position = new Vector3(birdsList[birdOnSpringIndex].transform.position.x, mainCamPos.y, mainCamPos.z);
+            //mainCamera.transform.position = new Vector3(birdsList[birdOnSpringIndex].transform.position.x, mainCamPos.y, mainCamPos.z);
             
             if(waitingBirdOutsideCorout != null)
             {
@@ -87,15 +89,23 @@ public class GameManager : MonoBehaviour
         blocksPos.x = blocksPosObject.transform.position.x;
         blocksPos.y = mainCamPos.y;
 
+        Vector2 camPosBig = new Vector3(0, camPosYBig);
+        camPosBig.x = (blocksPos.x + mainCamPos.x)/2;
 
-        yield return StartCoroutine(MoveToPos(blocksPos, 2f));
-        yield return StartCoroutine(WaitDur(2f));
-        yield return StartCoroutine(MoveToPos(mainCamPos, 2f));
+
+
+        yield return StartCoroutine(MoveToPos(blocksPos, 1.5f));
+        yield return StartCoroutine(WaitDur(1f));
+        yield return StartCoroutine(MoveToPos(mainCamPos, 1.5f));
 
 
         if(birdsList.Count > 0)
         {
-            movingBirdsCoroutine = StartCoroutine(MoveBirds(springPos, 3, 1, .2f));
+            yield return movingBirdsCoroutine = StartCoroutine(MoveBirds(springPos, 3, 1, .2f));
+            yield return StartCoroutine(WaitDur(1f));
+            yield return StartCoroutine(MoveToPos(camPosBig, 1.5f, true));
+
+            canSpring = true;
         }
     }
 
@@ -140,23 +150,29 @@ public class GameManager : MonoBehaviour
             birdsList[i].transform.position = targetPos;
         }
 
-        canSpring = true;
         movingBirdsCoroutine = null;
     }
 
-    private IEnumerator MoveToPos(Vector2 endPos, float duration)
+    private IEnumerator MoveToPos(Vector2 endPos, float duration, bool zoomOut = false)
     {
         Vector3 startPos = mainCamera.transform.position;
+        float sizeCamStart = mainCamera.orthographicSize;
         Vector3 end = new Vector3(endPos.x, endPos.y, startPos.z);
         float time = 0f;
         while (time < duration)
         {
             float t = time / duration;
             mainCamera.transform.position = Vector3.Lerp(startPos, end, t);
+
+            if(zoomOut)
+                mainCamera.orthographicSize = Mathf.Lerp(sizeCamStart, camSizeBig, t);
+
             time += Time.deltaTime;
             yield return null;
         }
         mainCamera.transform.position = end;
+        if(zoomOut)
+            mainCamera.orthographicSize = camSizeBig;
     }
 
     private IEnumerator WaitDur(float duration)
@@ -166,10 +182,11 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator NextBirdCorout( )
     {
-        yield return MoveToPos(mainCamPos, 2);
+        yield return null; //MoveToPos(mainCamPos, 2);
         if (birdOnSpringIndex < birdsList.Count - 1)
         {
             movingBirdsCoroutine = StartCoroutine(MoveBirds(springPos, 3, 1, .2f));
+            canSpring = true;
         }
     }
 
@@ -186,7 +203,6 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("WaitBirdOutside");
         yield return new WaitForSeconds(dur);
-        Player.Instance().NextBird();
 
         waitingBirdOutsideCorout = null;
     }
@@ -199,5 +215,13 @@ public class GameManager : MonoBehaviour
             _instance = new GameManager();
         }
         return _instance;
+    }
+
+    public void StopWaitingCorout()     {
+        if (waitingBirdOutsideCorout != null)
+        {
+            StopCoroutine(waitingBirdOutsideCorout);
+            waitingBirdOutsideCorout = null;
+        }
     }
 }
