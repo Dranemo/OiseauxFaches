@@ -39,7 +39,7 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     [SerializeField] private AudioClip release;
     [SerializeField] private AudioClip cancel;
 
-
+    private CanvasMain canvasMain;
 
 
     // --------------------------------------------------------------------------------------------- //
@@ -79,9 +79,9 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     void Start()
     {
         gameManager = GameManager.GetManager();
+        canvasMain = CanvasMain.GetInstance();
 
         lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.positionCount = bird.pointsCount;
     }
 
     // Update is called once per frame
@@ -94,7 +94,7 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
                 Power();
             }
         }
-        if (Input.GetKeyDown(KeyCode.Q) && gameManager.canSpring)
+        if (Input.GetMouseButtonDown(1) && gameManager.canSpring)
         {
             Cancel();
         }
@@ -109,12 +109,17 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     public void OnBeginDrag(PointerEventData eventData)
     {
         if(!gameManager.canSpring)
+        {
             canceled = true;
+            return;
+        }
 
         start_pos = transform.position;
         end_pos = start_pos;
 
-        AudioSource.PlayClipAtPoint(stretch, Camera.main.transform.position);
+        AudioSource.PlayClipAtPoint(stretch, transform.position);
+
+        canvasMain.DisplayCancel(true);
     }
 
     // Calcul de l'angle, position et vitesse initiale + drawline + deplacement spring
@@ -194,7 +199,8 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
         isLaunched = true;
 
-        AudioSource.PlayClipAtPoint(release, Camera.main.transform.position);
+        AudioSource.PlayClipAtPoint(release, transform.position);
+        canvasMain.DisplayCancel(false);
     }
 
 
@@ -245,7 +251,8 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         RemoveLine();
         canceled = true;
 
-        AudioSource.PlayClipAtPoint(cancel, Camera.main.transform.position);
+        AudioSource.PlayClipAtPoint(cancel, transform.position);
+        canvasMain.DisplayCancel(false);
     }
 
     public void NextBird()
@@ -260,5 +267,7 @@ public class Player : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     public void SetBird(Bird _bird)
     {
         bird = _bird;
+
+        lineRenderer.positionCount = bird.pointsCount;
     }
 }

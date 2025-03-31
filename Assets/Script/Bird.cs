@@ -53,11 +53,14 @@ public class Bird : MonoBehaviour
 
 
     [SerializeField] private AudioClip power;
+    CanvasMain canvasMain;
 
 
 
     private void Start()
     {
+        canvasMain = CanvasMain.GetInstance();
+
         listPosBird = new List<Vector2>();
         GetComponent<Rigidbody2D>().mass = mass;
 
@@ -81,9 +84,11 @@ public class Bird : MonoBehaviour
 
     public void Power()
     {
-        if(powerUsed || rebondCount > 0)
+        if(powerUsed)
             return;
         powerUsed = true;
+        
+        canvasMain.DisplayPower(false);
 
         powerDelegate();
         AudioSource.PlayClipAtPoint(power, transform.position);
@@ -99,6 +104,7 @@ public class Bird : MonoBehaviour
         }
 
         listPosBird.Clear();
+        canvasMain.DisplayPower(!powerUsed, powerType.ToString());
 
         if (stopped)
         {
@@ -280,6 +286,7 @@ public class Bird : MonoBehaviour
 
     void Rebond()
     {
+        powerUsed = true;
         InverseDirectionY();
 
         if(rebondCount * .05f < reboundFactor.y)
@@ -313,6 +320,8 @@ public class Bird : MonoBehaviour
     {
         if(stopped)
             return;
+
+        canvasMain.DisplayPower(false);
 
         Debug.Log("Stopped");
         stopped = true;
