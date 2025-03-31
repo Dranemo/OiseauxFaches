@@ -140,6 +140,7 @@ MonoBehaviour:
   pointsCount: 100
   timeStep: 0.1
   tempListPosBird: []
+  fixedJumpAngle: 45
   stopped: 0
   power: {fileID: 8300000, guid: e871daccd72cac54199a37e16b42ddc4, type: 3}
 --- !u!50 &2048365397806082487

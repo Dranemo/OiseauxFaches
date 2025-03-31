@@ -45,6 +45,7 @@ public class Bird : MonoBehaviour
     Vector2 currentLambda = new Vector2(0, 0);
     private float t_impact = .1f;
     private int rebondCount = 0;
+    [SerializeField] private float fixedJumpAngle = 45f;
 
     public bool stopped = false;
     Vector2 acceleration = new Vector2(1, 1);
@@ -189,15 +190,8 @@ public class Bird : MonoBehaviour
         Recurrence(startPosition);
     }
 
-    public void TrajectoryContinuity(Vector2 startPosition, bool jump = false)
+    public void TrajectoryContinuity(Vector2 startPosition)
     {
-        if (jump)
-        {
-            currentLambda.y = Mathf.Abs(currentLambda.y);
-        }
-
-        
-
         Recurrence(startPosition);
     }
 
@@ -302,6 +296,34 @@ public class Bird : MonoBehaviour
     }
 
 
+    Vector2 GetJumpLambda(Vector2 currentLambda, float fixedAngle)
+    {
+        // Calculer la magnitude de currentLambda
+        float magnitude = currentLambda.magnitude;
+
+        // Convertir l'angle fixe en radians
+        float angleInRadians = fixedAngle * Mathf.Deg2Rad;
+
+        // Calculer les composantes x et y du nouveau vecteur
+        float x = magnitude * Mathf.Cos(angleInRadians);
+        float y = magnitude * Mathf.Sin(angleInRadians);
+
+        // Ajuster la direction en fonction de la direction initiale de currentLambda
+        if (currentLambda.x < 0)
+        {
+            x = -x;
+        }
+
+        // Créer le nouveau vecteur avec la même magnitude et l'angle fixe
+        Vector2 jumpLambda = new Vector2(x, y);
+
+        return jumpLambda;
+    }
+
+
+
+
+
 
     public void BlockImpactHorizontal()
     {
@@ -342,7 +364,9 @@ public class Bird : MonoBehaviour
 
     private void DoubleJump()
     {
-        TrajectoryContinuity(transform.position, true);
+        currentLambda = GetJumpLambda(currentLambda, fixedJumpAngle);
+
+        TrajectoryContinuity(transform.position);
         Launch();
     }
 

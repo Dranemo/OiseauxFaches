@@ -69,6 +69,9 @@ public class GameManager : MonoBehaviour
     {
         if(camFollowBird)
         {
+            if (mainCamera.orthographicSize != camSizeSmall)
+                mainCamera.orthographicSize = camSizeSmall;
+
             float y = birdsList[birdOnSpringIndex].transform.position.y;
             if (y >= highestSmallCamera)
             {
@@ -79,30 +82,40 @@ public class GameManager : MonoBehaviour
                 y = lowestSmallCamera;
             }
             mainCamera.transform.position = new Vector3(mainCamera.transform.position.x, y, mainCamPos.z);
-        }
 
 
 
-        if (camFollowBird && birdsList[birdOnSpringIndex].transform.position.x > mainCamPos.x && birdsList[birdOnSpringIndex].transform.position.x < blocksPos.x)
-        {
-            if(mainCamera.orthographicSize != camSizeSmall)
-                mainCamera.orthographicSize = camSizeSmall;
 
 
-            mainCamera.transform.position = new Vector3(birdsList[birdOnSpringIndex].transform.position.x, mainCamera.transform.position.y, mainCamPos.z);
 
-            
-            if(waitingBirdOutsideCorout != null)
+
+
+
+
+            if (birdsList[birdOnSpringIndex].transform.position.x > mainCamPos.x && birdsList[birdOnSpringIndex].transform.position.x < blocksPos.x)
             {
-                StopCoroutine(waitingBirdOutsideCorout);
-                waitingBirdOutsideCorout = null;
+
+
+
+                mainCamera.transform.position = new Vector3(birdsList[birdOnSpringIndex].transform.position.x, mainCamera.transform.position.y, mainCamPos.z);
+
+
+                if (waitingBirdOutsideCorout != null)
+                {
+                    StopCoroutine(waitingBirdOutsideCorout);
+                    waitingBirdOutsideCorout = null;
+                }
+            }
+            else
+            {
+                if (waitingBirdOutsideCorout == null)
+                    waitingBirdOutsideCorout = StartCoroutine(WaitBirdOutside(3));
             }
         }
-        else if (camFollowBird)
-        {
-            if (waitingBirdOutsideCorout == null)
-                waitingBirdOutsideCorout = StartCoroutine(WaitBirdOutside(3));
-        }
+
+
+
+        
 
 
         if(Input.GetKeyDown(KeyCode.Escape)){
