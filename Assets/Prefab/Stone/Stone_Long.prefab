@@ -105,7 +105,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: f8d884eaed2326141a1f83fb5ec770b2, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -180,3 +180,4 @@ MonoBehaviour:
   - {fileID: 6596262407281605260, guid: 767068ce4c72b2645871eeb08f4ecccd, type: 3}
   - {fileID: 7036195501576613889, guid: 4d7c1d3ef176fce408f1307b7dee5be4, type: 3}
   maxDurability: 50
+  bounceMaterial: {fileID: 0}

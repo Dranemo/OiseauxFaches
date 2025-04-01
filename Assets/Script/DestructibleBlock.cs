@@ -31,8 +31,24 @@ public class DestructibleBlock : MonoBehaviour
 
             // Ajout d'une force artificielle pour simuler l'impact de l'oiseau
             Vector2 direction = (transform.position - collision.transform.position).normalized;
-            float pushForce = rb.mass * 5f; // Ajuste le facteur selon le ressenti
+            float pushForce = rb.mass * 7.5f; // Ajuste le facteur selon le ressenti
             GetComponent<Rigidbody2D>()?.AddForce(direction * pushForce, ForceMode2D.Impulse);
+
+            // Appel des fonctions de rebond
+            Bird bird = collision.collider.GetComponent<Bird>();
+            if (bird != null)
+            {
+                // Déterminer la direction de l'impact
+                Vector2 impactDirection = collision.contacts[0].normal;
+                if (Mathf.Abs(impactDirection.x) > Mathf.Abs(impactDirection.y))
+                {
+                    bird.BlockImpactHorizontal();
+                }
+                else
+                {
+                    bird.BlockImpactVertical();
+                }
+            }
         }
         else
         {
@@ -69,6 +85,4 @@ public class DestructibleBlock : MonoBehaviour
         state = newState;
         spriteRenderer.sprite = damageSprites[(int)newState];
     }
-
-
 }

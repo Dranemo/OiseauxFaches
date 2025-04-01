@@ -107,6 +107,7 @@ MonoBehaviour:
   - {fileID: -5401608649808760138, guid: e809fb5edb110814fa51e8ed9488727b, type: 3}
   - {fileID: 5850330922594191868, guid: 16ebd7ecfbb75bc489ecf79f4c08745b, type: 3}
   maxDurability: 20
+  bounceMaterial: {fileID: 6200000, guid: f8d884eaed2326141a1f83fb5ec770b2, type: 2}
 --- !u!50 &8634509503654163256
 Rigidbody2D:
   serializedVersion: 4

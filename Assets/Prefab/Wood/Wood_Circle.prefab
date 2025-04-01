@@ -167,3 +167,4 @@ MonoBehaviour:
   blockType: 0
   damageSprites: []
   maxDurability: 20
+  bounceMaterial: {fileID: 6200000, guid: f8d884eaed2326141a1f83fb5ec770b2, type: 2}

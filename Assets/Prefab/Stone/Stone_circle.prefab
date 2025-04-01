@@ -105,7 +105,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: f8d884eaed2326141a1f83fb5ec770b2, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -134,6 +134,7 @@ MonoBehaviour:
   - {fileID: 4184636370254694604, guid: 7f53d392b98291045b36f34c36db8a8a, type: 3}
   - {fileID: 3696791705360256447, guid: 4bd650faad9dd7a44915fca60d8b1769, type: 3}
   maxDurability: 50
+  bounceMaterial: {fileID: 0}
 --- !u!58 &7235863008831902124
 CircleCollider2D:
   m_ObjectHideFlags: 0

@@ -60,6 +60,7 @@ public class Bird : MonoBehaviour
 
     private void Start()
     {
+
         canvasMain = CanvasMain.GetInstance();
 
         listPosBird = new List<Vector2>();
