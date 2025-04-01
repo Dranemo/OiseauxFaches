@@ -55,12 +55,13 @@ public class Bird : MonoBehaviour
 
     [SerializeField] private AudioClip power;
     CanvasMain canvasMain;
+    CircleCollider2D circleCollider;
 
 
 
     private void Start()
     {
-
+        circleCollider = GetComponent<CircleCollider2D>();
         canvasMain = CanvasMain.GetInstance();
 
         listPosBird = new List<Vector2>();
@@ -107,6 +108,7 @@ public class Bird : MonoBehaviour
 
         listPosBird.Clear();
         canvasMain.DisplayPower(!powerUsed, powerType.ToString());
+        circleCollider.enabled = true;
 
         if (stopped)
         {
@@ -329,11 +331,15 @@ public class Bird : MonoBehaviour
     public void BlockImpactHorizontal()
     {
         InverseDirectionX();
+        TrajectoryContinuity(transform.position);
+        Launch();
     }
 
     public void BlockImpactVertical()
     {
-        InverseDirectionY();
+        Rebond();
+        TrajectoryContinuity(transform.position);
+        Launch();
     }
 
 
@@ -358,6 +364,10 @@ public class Bird : MonoBehaviour
 
         if(!fromPlayerClass)
             Player.Instance().NextBird();
+
+
+
+        GetComponent<Rigidbody2D>().gravityScale = 1;
     }
 
 

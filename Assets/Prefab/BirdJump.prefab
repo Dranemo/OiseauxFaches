@@ -141,7 +141,6 @@ MonoBehaviour:
   pointsCount: 100
   timeStep: 0.1
   tempListPosBird: []
-  bounceMaterial: {fileID: 6200000, guid: f8d884eaed2326141a1f83fb5ec770b2, type: 2}
   fixedJumpAngle: 45
   stopped: 0
   power: {fileID: 8300000, guid: e871daccd72cac54199a37e16b42ddc4, type: 3}
@@ -161,7 +160,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 6200000, guid: f8d884eaed2326141a1f83fb5ec770b2, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -294,7 +293,7 @@ CircleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5080402381892654225}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}

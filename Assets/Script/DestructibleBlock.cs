@@ -31,7 +31,7 @@ public class DestructibleBlock : MonoBehaviour
 
             // Ajout d'une force artificielle pour simuler l'impact de l'oiseau
             Vector2 direction = (transform.position - collision.transform.position).normalized;
-            float pushForce = rb.mass * 7.5f; // Ajuste le facteur selon le ressenti
+            float pushForce = rb.mass * 15f; // Ajuste le facteur selon le ressenti
             GetComponent<Rigidbody2D>()?.AddForce(direction * pushForce, ForceMode2D.Impulse);
 
             // Appel des fonctions de rebond
