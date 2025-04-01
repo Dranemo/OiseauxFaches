@@ -18,7 +18,7 @@ public class Bird : MonoBehaviour
     public float mass = .8f;
     [SerializeField] private PowerType powerType;
     bool powerUsed = false;
-    float velocity = 0;
+    public float velocity = 0;
 
 
 

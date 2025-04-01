@@ -834,6 +834,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1913591934}
     m_Modifications:
+    - target: {fileID: -4190836340690767916, guid: 16f8289ff18314341a3eb52db7a00e09, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3074048333106559838, guid: 16f8289ff18314341a3eb52db7a00e09, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.6108418
@@ -1533,6 +1537,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1913591934}
     m_Modifications:
+    - target: {fileID: -4190836340690767916, guid: 16f8289ff18314341a3eb52db7a00e09, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3074048333106559838, guid: 16f8289ff18314341a3eb52db7a00e09, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.5053158
@@ -1860,6 +1868,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wood_small_long (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8634509503654163256, guid: 27a30796c2d9be84783edece097b4139, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1873,6 +1885,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1913591934}
     m_Modifications:
+    - target: {fileID: 6588080965325884169, guid: e7d974c224f60f248bea79c3b7a4cd8b, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8561688711817103276, guid: e7d974c224f60f248bea79c3b7a4cd8b, type: 3}
       propertyPath: m_Name
       value: Wood_Long
@@ -2949,6 +2965,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wood_small_long
       objectReference: {fileID: 0}
+    - target: {fileID: 8634509503654163256, guid: 27a30796c2d9be84783edece097b4139, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3605,7 +3625,7 @@ MonoBehaviour:
   birdPrefabList:
   - {fileID: 5080402381892654225, guid: ced4651387694e645b8d459e01cee84a, type: 3}
   - {fileID: 5080402381892654225, guid: 7420e6755e8465a488dcca77251b34ea, type: 3}
-  IndexBirdsLevel: 000000000100000000000000
+  IndexBirdsLevel: 0000000001000000000000000100000000000000
   firstBirdPos: {x: -3, y: -3.5}
   birdDistance: {x: -1, y: 0}
   springPos: {x: -0.61, y: -0.67}
@@ -3975,6 +3995,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8987541057602208317, guid: 07ed34d2ef6a6a34f93b8db1a521943c, type: 3}
+      propertyPath: m_Mass
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8987541057602208317, guid: 07ed34d2ef6a6a34f93b8db1a521943c, type: 3}
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 0}
@@ -4166,6 +4190,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1913591934}
     m_Modifications:
+    - target: {fileID: 6588080965325884169, guid: e7d974c224f60f248bea79c3b7a4cd8b, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8561688711817103276, guid: e7d974c224f60f248bea79c3b7a4cd8b, type: 3}
       propertyPath: m_Name
       value: Wood_Long (1)
@@ -4984,6 +5012,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1913591934}
     m_Modifications:
+    - target: {fileID: -4190836340690767916, guid: 16f8289ff18314341a3eb52db7a00e09, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3074048333106559838, guid: 16f8289ff18314341a3eb52db7a00e09, type: 3}
       propertyPath: m_LocalScale.x
       value: 2.5
@@ -5569,6 +5601,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1913591934}
     m_Modifications:
+    - target: {fileID: 1457798418270993007, guid: d0cd5cb3a344c594fa4c66f0057b4a1a, type: 3}
+      propertyPath: m_Mass
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1457798418270993007, guid: d0cd5cb3a344c594fa4c66f0057b4a1a, type: 3}
       propertyPath: m_Material
       value: 
@@ -6284,6 +6320,10 @@ PrefabInstance:
     - target: {fileID: 5405519815438459824, guid: 07ed34d2ef6a6a34f93b8db1a521943c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8987541057602208317, guid: 07ed34d2ef6a6a34f93b8db1a521943c, type: 3}
+      propertyPath: m_Mass
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8987541057602208317, guid: 07ed34d2ef6a6a34f93b8db1a521943c, type: 3}
       propertyPath: m_Material
